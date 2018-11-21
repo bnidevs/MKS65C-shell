@@ -6,17 +6,22 @@
 
 // pulled from parseargs repo
 
-void exec(char * line){
-	char ** array = calloc(5, sizeof(char*));
-	char s[100];
+char ** pargs(char * line, char * dlim){
+	char ** array = calloc(16, sizeof(char*));
+	char s[1024];
 	sprintf(s, "%s", line);
 	char *s1 = s;
 	int x = 0;
 	while (s1){
-		array[x] = strsep( &s1, " ");
-		printf("%s", array[x]);
+		array[x] = strsep(&s1, dlim);
 		x++;
 	}
+	return array;
+}
+
+void exec(char * line){
+	char * dlim = " ";
+	char ** array = pargs(line, dlim);
 
 	int f = fork();
 	if(!f){
@@ -57,7 +62,26 @@ void prompt(){
 	free(usr);
 }
 
+char ** readr(){
+	char * line = malloc(1024);
+	fgets(line, 1024, stdin);
+
+	char * dlim = ";";
+	char ** array = pargs(line, dlim);
+	return array;
+}
+
 int main(){
-	prompt();
+	while(1){
+		prompt();
+		char ** cmds = readr();
+
+		int inc = 0;
+		while(cmds[inc]){
+			exec(cmds[inc]);
+				exit(0);
+			}
+		}
+	}
 	return 0;
 }

@@ -79,6 +79,7 @@ int main(){
 		int inc = 0;
 		while(cmds[inc]){
 			exec(cmds[inc]);
+			if(!strcmp(cmds[inc], "exit")){
 				exit(0);
 			}
 		}

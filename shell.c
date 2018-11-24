@@ -8,9 +8,7 @@
 
 char ** pargs(char * line, char * dlim){
 	char ** array = calloc(16, sizeof(char*));
-	char s[1024];
-	sprintf(s, "%s", line);
-	char *s1 = s;
+	char *s1 = line;
 	int x = 0;
 	while (s1){
 		array[x] = strsep(&s1, dlim);
@@ -19,15 +17,29 @@ char ** pargs(char * line, char * dlim){
 	return array;
 }
 
-void exec(char * line){
-	char * dlim = " ";
-	char ** array = pargs(line, dlim);
+void print_arr(char ** args) {
+    int i = 0;
+    while (args[i]) {
+        printf("'%s' ", args[i]);
+        i++;
+    }
+}
 
-	int f = fork();
-	if(!f){
-		execvp(array[0], array);
+void exec(char * line){
+	char ** array = pargs(line, " ");
+
+	if(!strcmp(array[0], "cd")){
+		chdir(array[1]);
+	}else if(!strcmp(array[0], "exit")){
+		exit(0);
 	}else{
-		wait(NULL);
+		int f = fork();
+		if(!f){
+			execvp(array[0], array);
+			exit(0);
+		}else{
+			wait(NULL);
+		}
 	}
 	free(array);
 }
@@ -66,6 +78,12 @@ char ** readr(){
 	char * line = malloc(1024);
 	fgets(line, 1024, stdin);
 
+	char * inc = line;
+	while(strcmp(inc, "\n") && *inc){
+		inc++;
+	}
+	*inc = 0;
+
 	char * dlim = ";";
 	char ** array = pargs(line, dlim);
 	return array;
@@ -82,7 +100,7 @@ int main(){
 			if(!strcmp(cmds[inc], "exit")){
 				exit(0);
 			}
+			inc++;
 		}
 	}
-	return 0;
 }

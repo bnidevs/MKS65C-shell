@@ -4,14 +4,25 @@
 #include <sys/wait.h>
 #include <string.h>
 
-// pulled from parseargs repo
+char * strip(char * material){
+	while(!strncmp(material, " ", 1)){
+		material++;
+	}
+
+	char * end = strchr(material, 0);
+	while(!strncmp((end - 1), " ", 1)){
+		end--;
+	}
+	*end = 0;
+	return material;
+}
 
 char ** pargs(char * line, char * dlim){
 	char ** array = calloc(16, sizeof(char*));
 	char *s1 = line;
 	int x = 0;
 	while (s1){
-		array[x] = strsep(&s1, dlim);
+		array[x] = strip(strsep(&s1, dlim));
 		x++;
 	}
 	return array;
@@ -20,7 +31,6 @@ char ** pargs(char * line, char * dlim){
 void print_arr(char ** args) {
     int i = 0;
     while (args[i]) {
-        printf("'%s' ", args[i]);
         i++;
     }
 }
@@ -86,6 +96,7 @@ char ** readr(){
 
 	char * dlim = ";";
 	char ** array = pargs(line, dlim);
+	print_arr(array);
 	return array;
 }
 

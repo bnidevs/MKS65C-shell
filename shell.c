@@ -44,9 +44,9 @@ void exec(char * line){
 		if(!f){
 			int fd = open(array[1], O_CREAT | O_WRONLY, 0777);
 			dup2(fd, 1);
+			close(fd);
 			char ** cmdarray = pargs(array[0], " ");
 			execvp(cmdarray[0], cmdarray);
-			free(cmdarray);
 			exit(0);
 		}else{
 			wait(NULL);
@@ -60,9 +60,36 @@ void exec(char * line){
 		if(!f){
 			int fd = open(array[1], O_CREAT | O_RDONLY, 0777);
 			dup2(fd, 0);
+			close(fd);
 			char ** cmdarray = pargs(array[0], " ");
 			execvp(cmdarray[0], cmdarray);
-			free(cmdarray);
+			exit(0);
+		}else{
+			wait(NULL);
+		}
+
+		free(array);
+	}else if(strchr(line, 124)){
+		char ** array = pargs(line, "|");
+
+		int fds[2];
+		pipe(fds);
+
+		int f = fork();
+		if(!f){ 
+			dup2(fds[1], 1);
+			char ** cmdarray = pargs(array[0], " ");
+			execvp(cmdarray[0], cmdarray);
+			exit(0);
+		}else{
+			wait(NULL);
+		}
+
+		f = fork();
+		if(!f){
+			dup2(fds[0], 0);
+			char ** cmdarray = pargs(array[1], " ");
+			execvp(cmdarray[0], cmdarray);
 			exit(0);
 		}else{
 			wait(NULL);

@@ -72,7 +72,7 @@ void exec(char * line){
 	}else if(strchr(line, 124)){
 		char ** array = pargs(line, "|");
 
-		int fds[2];
+		int fds[2] = {0,0};
 		pipe(fds);
 
 		int f = fork();

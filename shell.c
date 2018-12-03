@@ -5,6 +5,9 @@
 #include <string.h>
 #include <fcntl.h>
 
+// takes off whitespace surrounding string
+// takes a char *
+// returns char *
 char * strip(char * material){
 	while(!strncmp(material, " ", 1)){
 		material++;
@@ -18,6 +21,9 @@ char * strip(char * material){
 	return material;
 }
 
+// splits up a char * into a char ** by a delimiter
+// takes a char * to break up and a char * as a delimiter
+// returns a char **
 char ** pargs(char * line, char * dlim){
 	char ** array = calloc(16, sizeof(char*));
 	char *s1 = line;
@@ -29,6 +35,9 @@ char ** pargs(char * line, char * dlim){
 	return array;
 }
 
+// prints a char **
+// takes a char *
+// returns nothing
 void print_arr(char ** args) {
     int i = 0;
     while (args[i]) {
@@ -36,6 +45,10 @@ void print_arr(char ** args) {
     }
 }
 
+// distinguishes between a standard command/command that takes stdin/command that makes stdout/commands that pipe
+// forks and execs commands
+// takes a char *
+// returns nothing
 void exec(char * line){
 	if(strchr(line, 62)){
 		char ** array = pargs(line, ">");
@@ -76,7 +89,7 @@ void exec(char * line){
 		pipe(fds);
 
 		int f = fork();
-		if(!f){ 
+		if(!f){
 			dup2(fds[1], 1);
 			char ** cmdarray = pargs(array[0], " ");
 			execvp(cmdarray[0], cmdarray);
@@ -116,6 +129,9 @@ void exec(char * line){
 	}
 }
 
+// prints command prompt
+// takes nothing
+// returns nothing
 void prompt(){
 
 	//hostname
@@ -123,7 +139,9 @@ void prompt(){
 	char * host = malloc(64);
 	gethostname(host, 64);
 	char * cut = strchr(host, 46);
-	*cut = 0;
+	if(cut){
+		*cut = 0;
+	}
 
 	//currdir
 
@@ -146,6 +164,9 @@ void prompt(){
 	free(usr);
 }
 
+// reads in line from command prompt
+// takes nothing
+// returns char **
 char ** readr(){
 	char * line = malloc(1024);
 	fgets(line, 1024, stdin);
@@ -162,6 +183,7 @@ char ** readr(){
 	return array;
 }
 
+// main method
 int main(){
 	while(1){
 		prompt();
@@ -176,4 +198,5 @@ int main(){
 			inc++;
 		}
 	}
+	return 0;
 }

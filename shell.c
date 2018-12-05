@@ -90,17 +90,14 @@ void exec(char * line){
 
 		int f = fork();
 		if(!f){
-			dup2(fds[1], 1);
-			char ** cmdarray = pargs(array[0], " ");
-			execvp(cmdarray[0], cmdarray);
-			exit(0);
-		}else{
-			wait(NULL);
-		}
-
-		f = fork();
-		if(!f){
 			dup2(fds[0], 0);
+			int f2 = fork();
+			if(getppid() == f){
+				dup2(fds[1], 1);
+				char ** cmdarray = pargs(array[0], " ");
+				execvp(cmdarray[0], cmdarray); 
+				exit(0);
+			}
 			char ** cmdarray = pargs(array[1], " ");
 			execvp(cmdarray[0], cmdarray);
 			exit(0);

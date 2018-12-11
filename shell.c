@@ -85,25 +85,22 @@ void exec(char * line){
 	}else if(strchr(line, 124)){
 		char ** array = pargs(line, "|");
 
+		char ** cmd1 = pargs(array[0], " ");
+		char ** cmd2 = pargs(array[1], " ");
+
 		int fds[2] = {0,0};
-		pipe(fds);
 
 		int f = fork();
 		if(!f){
-			int f2 = fork();
-			if(getpid() == f2){
-				//close(fds[0]);
-				dup2(fds[1], 1);
-				char ** cmdarray = pargs(array[0], " ");
-				execvp(cmdarray[0], cmdarray); 
-				exit(0);
+			pipe(fds);
+			f = fork();
+			if(f){
+				dup2(fds[1], STDOUT_FILENO);
+				execvp(cmd1[0], cmd1);
 			}else{
 				wait(NULL);
-				//close(fds[1]);
-				dup2(fds[0], 0);
-				char ** cmdarray = pargs(array[1], " ");
-				execvp(cmdarray[0], cmdarray);
-				exit(0);
+				dup2(fds[0], STDIN_FILENO);
+				execvp(cmd2[0], cmd2);
 			}
 		}else{
 			wait(NULL);

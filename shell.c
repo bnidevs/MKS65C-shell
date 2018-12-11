@@ -91,15 +91,15 @@ void exec(char * line){
 		int f = fork();
 		if(!f){
 			int f2 = fork();
-			if(getppid() == f){
-				close(fds[0]);
+			if(getpid() == f2){
+				//close(fds[0]);
 				dup2(fds[1], 1);
 				char ** cmdarray = pargs(array[0], " ");
 				execvp(cmdarray[0], cmdarray); 
 				exit(0);
 			}else{
 				wait(NULL);
-				close(fds[1]);
+				//close(fds[1]);
 				dup2(fds[0], 0);
 				char ** cmdarray = pargs(array[1], " ");
 				execvp(cmdarray[0], cmdarray);

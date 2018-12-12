@@ -85,26 +85,13 @@ void exec(char * line){
 	}else if(strchr(line, 124)){
 		char ** array = pargs(line, "|");
 
-		char ** cmd1 = pargs(array[0], " ");
-		char ** cmd2 = pargs(array[1], " ");
+		FILE * first = popen(array[0], "r");
+		FILE * second = popen(array[1], "w");
 
-		int fds[2] = {0,0};
+		char path[1024];
+		fgets(path, 1024, first);
 
-		int f = fork();
-		if(!f){
-			pipe(fds);
-			f = fork();
-			if(f){
-				dup2(fds[1], STDOUT_FILENO);
-				execvp(cmd1[0], cmd1);
-			}else{
-				wait(NULL);
-				dup2(fds[0], STDIN_FILENO);
-				execvp(cmd2[0], cmd2);
-			}
-		}else{
-			wait(NULL);
-		}
+		fprintf(second, "%s", path);
 
 		free(array);
 	}else{

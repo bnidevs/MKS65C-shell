@@ -5,11 +5,8 @@ Bill Ni
 * Change directory
 * Execute commands
 * Redirect using > and <
+* Pipe using |
 * Exit
-
-## Bugs
-* Pipe doesn't work
-  * ls | wc results in wc waiting for input
   
 ## Functions
 

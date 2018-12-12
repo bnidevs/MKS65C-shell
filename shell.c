@@ -88,10 +88,13 @@ void exec(char * line){
 		FILE * first = popen(array[0], "r");
 		FILE * second = popen(array[1], "w");
 
-		char path[1024];
-		fgets(path, 1024, first);
+		char path[4096];
+		while(fgets(path, 4096, first)){
+			fprintf(second, "%s", path);
+		}
 
-		fprintf(second, "%s", path);
+		pclose(first);
+		pclose(second);
 
 		free(array);
 	}else{

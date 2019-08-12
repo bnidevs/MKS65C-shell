@@ -4,8 +4,6 @@ Bill Ni
 ## What can it do
 * Change directory
 * Execute commands
-* Redirect using > and <
-* Pipe using |
 * Exit
   
 ## Functions
